@@ -1,13 +1,14 @@
 import javafx.application.Application;
 import javafx.stage.Stage;
+import src.MailApp;
 
 /**
  * Created by maxencebernier on 17/05/2017.
  */
-public class Main extends Application {
+public class MainClient extends Application {
 
     public void start(Stage primaryStage) throws Exception{
-        new TFTPApp(primaryStage);
+        new MailApp(primaryStage);
     }
 
     public static void main(String[] args) {

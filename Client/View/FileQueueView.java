@@ -10,8 +10,10 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Observable;
+import java.util.Observer;
 
 /**
  * Created by Mathieu on 08/06/2018.
@@ -29,13 +31,7 @@ public class FileQueueView extends ScrollPane implements Observer {
         pIndics = new HashMap<Integer, ProgressIndicator>();
 
         FileInputStream fileImgStream = null;
-        try {
-            fileImgStream = new FileInputStream("Images/file.png");
-            //fileImgStream = new FileInputStream("src/Images/file.png");
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        fileImage = new Image(fileImgStream);
+
     }
 
 

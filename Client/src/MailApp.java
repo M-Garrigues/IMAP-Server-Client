@@ -1,4 +1,5 @@
-import Model.Client;
+package src;
+
 import View.ErrorView;
 import View.FileQueueView;
 import javafx.scene.Group;
@@ -13,8 +14,8 @@ import javafx.stage.Stage;
 
 import javax.swing.*;
 
-public class TFTPApp {
-    public TFTPApp(Stage stage) {
+public class MailApp {
+    public MailApp(Stage stage) {
         stage.setTitle("TFTP_SendFile");
         stage.setWidth(600);
         stage.setHeight(400);
