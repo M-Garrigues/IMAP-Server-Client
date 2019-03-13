@@ -3,7 +3,7 @@ import javafx.stage.Stage;
 import src.MailApp;
 
 /**
- * Created by maxencebernier on 17/05/2017.
+ * Created by mathieu garrigues on 17/05/2017.
  */
 public class MainClient extends Application {
 

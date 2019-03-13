@@ -1,18 +1,25 @@
 package src;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 import java.net.*;
 import java.util.Observable;
 
 public class Client extends Observable {
+
+
     private DatagramSocket ds;
     private int portToSend;
     private InetAddress ip;
     private int port;
     private int nextFileId = 0;
+
+    private Socket socket;
+
+    private BufferedReader reader;
+    private BufferedWriter writer;
+
+    private String host;
+    private int hostPort;
 
 
     public Client(String ip, int port)
@@ -301,5 +308,45 @@ public class Client extends Observable {
         return portLibre;
     }
 
+    public boolean connectToHost(String host, int port) throws IOException{
 
+        socket = new Socket();
+
+        socket.connect(new InetSocketAddress(host, port));
+
+        reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+
+        writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+
+        return true;
+    }
+
+    public boolean isConnected(){
+         return socket != null && socket.isConnected();
+    }
+
+    public boolean sendAPOP(String username, String pwd){
+
+        try{
+            writer.write("APOP "+username+" "+pwd);
+        }catch (Exception e){
+            System.out.println("error wrinting sendAPOP");
+        }
+        return true;
+    }
+
+
+
+    public void sendLIST(){
+
+    }
+
+    public void sendSTAT(){
+
+    }
+
+    public String retrieveMessage(int id){
+
+        return new String();
+    }
 }
