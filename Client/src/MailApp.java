@@ -64,7 +64,7 @@ public class MailApp {
             int returnVal = chooser.showOpenDialog(null);
             if(returnVal == JFileChooser.APPROVE_OPTION) {
 
-                client.sendFile(chooser.getSelectedFile().getPath().replace("\\", "/"));
+                //client.sendFile(chooser.getSelectedFile().getPath().replace("\\", "/"));
             }
         });
         container.setLeft(button_chose);
