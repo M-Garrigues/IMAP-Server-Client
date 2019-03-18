@@ -6,6 +6,7 @@ import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -18,13 +19,17 @@ import java.util.List;
 
 public class MailApp {
 
+
     Client client = new Client();
     List<Message> messages;
     int nbNewMessages = 0;
-
-
+    
     public MailApp(Stage stage) {
-        stage.setTitle("TFTP_SendFile");
+
+
+
+
+        stage.setTitle("POP3 Client");
         stage.setWidth(600);
         stage.setHeight(400);
 
@@ -32,54 +37,59 @@ public class MailApp {
 
 
         Group root = new Group();
+        String username = "username";
         String ip = "localhost";
         int port = 69;
 
-        Client client = new Client(ip, port);
         BorderPane container = new BorderPane();
         VBox vBox = new VBox();
 
         // zone de changement de port et ip du serveur distant
+        HBox hBox1 = new HBox();
+        Label label_user = new Label(" Username : ");
+        hBox1.getChildren().add(label_user);
+        TextField input_user = new TextField(username);
+        hBox1.getChildren().add(input_user);
 
-        Label current = new Label("  Ip: " + ip + " et Port: " + port);
-        HBox hBox = new HBox();
-        Label label_ip = new Label(" Adresse: ");
-        hBox.getChildren().add(label_ip);
+        HBox hBox2 = new HBox();
+        Label label_password = new Label(" Password :  ");
+        hBox2.getChildren().add(label_password);
+        PasswordField input_password = new PasswordField();
+        hBox2.getChildren().add(input_password);
+
+        HBox hBox3 = new HBox();
+        Label label_ip = new Label(" Server IP :   ");
+        hBox3.getChildren().add(label_ip);
         TextField input_ip = new TextField(ip);
-        hBox.getChildren().add(input_ip);
-        Label label_port = new Label("Port: ");
-        hBox.getChildren().add(label_port);
+        hBox3.getChildren().add(input_ip);
+        Label label_port = new Label("  Server Port : ");
+        hBox3.getChildren().add(label_port);
         TextField input_port = new TextField(Integer.toString(port));
-        hBox.getChildren().add(input_port);
-        Button button_change = new Button("Appliquer");
-        button_change.setOnAction(e -> {
-            current.setText("Ip: " + input_ip.getText() + " et Port: " + input_port.getText());
-            client.setIP(input_ip.getText());
-            client.setPort(Integer.parseInt(input_port.getText()));
+        hBox3.getChildren().add(input_port);
+
+        HBox hBox4 = new HBox();
+        Button button_connexion = new Button("Connexion");
+        button_connexion.setOnAction(e -> {
+
         });
-        hBox.getChildren().add(button_change);
-        vBox.getChildren().add(hBox);
+        Label label_spacing =new Label("                    ");
+        hBox4.getChildren().add(label_spacing);
+        hBox4.getChildren().add(button_connexion);
+        vBox.getChildren().add(hBox1);
+        vBox.getChildren().add(hBox2);
+        vBox.getChildren().add(hBox3);
+        vBox.getChildren().add(hBox4);
 
 
-        vBox.getChildren().add(current);
+
         container.setTop(vBox);
 
 
 
-        Button button_chose = new Button("Choisir un fichier à envoyer");
-        button_chose.setOnAction(e -> {
-            JFileChooser chooser = new JFileChooser();
-            int returnVal = chooser.showOpenDialog(null);
-            if(returnVal == JFileChooser.APPROVE_OPTION) {
 
-                //client.sendFile(chooser.getSelectedFile().getPath().replace("\\", "/"));
-            }
-        });
-        container.setLeft(button_chose);
 
-        FileQueueView fileQueue = new FileQueueView();
-        client.addObserver(fileQueue);
-        container.setCenter(fileQueue);
+
+
         root.getChildren().add(container);
 
         Scene scene = new Scene(root);
@@ -92,7 +102,10 @@ public class MailApp {
         client.addObserver(errorView);
     }
 
-    public void connect() throws IOException{
+
+
+
+    public void connect() throws IOException {
 
         assert !client.isConnected() : "Client is already connnected";
 
