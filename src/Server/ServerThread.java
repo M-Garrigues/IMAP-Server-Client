@@ -20,6 +20,7 @@ public class ServerThread extends Thread{
     private BufferedReader in;
 
     private String currentUser;
+    private int passwordErrors = 0;
 
     public ServerThread(ServerSocket serverSocket) throws IOException {
         this.serverState = StateEnum.STOPPED;
@@ -30,6 +31,23 @@ public class ServerThread extends Thread{
     public void run(){
         serverState = StateEnum.READY;
 
+        while(true){
+            switch(serverState){
+                case READY:
+                    handleReadyState();
+                    break;
+                case AUTHORIZATION:
+                    handleAuthorizationState();
+                    break;
+                case WAITING_PASSWORD:
+                    handleWaitingPasswordState();
+                    break;
+            }
+        }
+
+    }
+
+    private void handleReadyState(){
         //Attente d'une connexion
         try {
             serverThreadSocket = serverSocket.accept();
@@ -45,36 +63,59 @@ public class ServerThread extends Thread{
         //Passage dans l'état Authorization
         serverState = StateEnum.AUTHORIZATION;
         out.println("+OK POP3 server ready");
-
-        while(true){
-            switch(serverState){
-                case AUTHORIZATION:
-                    handleAuthorizationState();
-                    break;
-            }
-        }
-
     }
 
     private void handleAuthorizationState(){
-        String input;
             try {
-                while((input = in.readLine()) != null){
-                    String[] params = input.split(" ", 2);
-                    if(params[0].equals("USER")){
-                        if(!params[1].equals("utilisateur1") && !params[1].equals("utilisateur2")){
-                            out.println("-ERR unknown user : " + params[1]);
-                        }
-                        else{
-                            currentUser = params[1];
-
-                            out.println("+OK");
-                        }
+                String input = in.readLine();
+                String[] params = input.split(" ", 2);
+                if(params[0].equals("USER")){
+                    if(!params[1].equals("utilisateur1") && !params[1].equals("utilisateur2")){
+                        out.println("-ERR unknown user : " + params[1]);
                     }
+                    else{
+                        currentUser = params[1];
+                        serverState = StateEnum.WAITING_PASSWORD;
+
+                        out.println("+OK");
+                    }
+                }
+                else if(params[0].equals("APOP")){
+                    //TODO: commande APOP
                 }
             } catch (IOException e) {
                 e.printStackTrace();
             }
+    }
+
+    private void handleWaitingPasswordState(){
+        try {
+            String input = in.readLine();
+            String[] params = input.split(" ", 2);
+            if(params[0].equals("PASS")){
+                if(!params[1].equals("1234")){
+                    passwordErrors++;
+
+                    if(passwordErrors >= 3){
+                        out.println("-ERR Invalid password. Too many errors, closing connection...");
+                        serverThreadSocket.close();
+                        serverState = StateEnum.READY;
+                    }
+                    else{
+                        out.println("-ERR Invalid password.");
+                        serverState = StateEnum.AUTHORIZATION;
+                    }
+                }
+                else{
+                    passwordErrors = 0;
+                    currentUser = params[1];
+                    serverState = StateEnum.TRANSACTION;
+                    out.println("+OK");
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public StateEnum getServerState(){

@@ -2,13 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="cdb932d9-7e58-4d94-93a9-e7b232ef17da" name="Default" comment="">
-      <change afterPath="$PROJECT_DIR$/src/Server/Server.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Server/ServerThread.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Server/StateEnum.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/ant.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Server/test.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/Server/test.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Server/ServerThread.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Server/ServerThread.java" afterDir="false" />
     </list>
     <ignored path="JavaFxApplication.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -98,12 +92,12 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/Server/ServerThread.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="258">
-              <caret line="51" column="31" selection-start-line="51" selection-start-column="31" selection-end-line="51" selection-end-column="31" />
+            <state relative-caret-position="411">
+              <caret line="101" column="54" lean-forward="true" selection-start-line="101" selection-start-column="54" selection-end-line="101" selection-end-column="54" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#2426#2427#0" expanded="true" />
-                <element signature="e#2460#2461#0" expanded="true" />
+                <element signature="e#3518#3519#0" expanded="true" />
+                <element signature="e#3552#3553#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -236,7 +230,7 @@
     <property name="OverrideImplement.combined" value="false" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1552905086572" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1552905235099" />
     <property name="dynamic.classpath" value="false" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="recentsLimit" value="5" />
@@ -481,16 +475,15 @@
       <workItem from="1359379250712" duration="1302000" />
       <workItem from="1552471165794" duration="3173000" />
       <workItem from="1552838444658" duration="2502000" />
-      <workItem from="1552900549233" duration="4203000" />
+      <workItem from="1552900549233" duration="5659000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="11180000" />
+    <option name="totallyTimeSpent" value="12636000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1296" height="1000" extended-state="6" />
-    <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" sideWeight="0.6703755" visible="true" weight="0.26132685" />
       <window_info id="Structure" order="1" weight="0.25" />
@@ -614,12 +607,12 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/Server/ServerThread.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="258">
-          <caret line="51" column="31" selection-start-line="51" selection-start-column="31" selection-end-line="51" selection-end-column="31" />
+        <state relative-caret-position="411">
+          <caret line="101" column="54" lean-forward="true" selection-start-line="101" selection-start-column="54" selection-end-line="101" selection-end-column="54" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#2426#2427#0" expanded="true" />
-            <element signature="e#2460#2461#0" expanded="true" />
+            <element signature="e#3518#3519#0" expanded="true" />
+            <element signature="e#3552#3553#0" expanded="true" />
           </folding>
         </state>
       </provider>
