@@ -1,7 +1,6 @@
 import javafx.application.Application;
 import javafx.stage.Stage;
 import src.Client;
-import src.MailApp;
 import src.Message;
 
 import java.util.List;
@@ -12,7 +11,7 @@ import java.util.List;
 public class MainClient extends Application {
 
     public void start(Stage primaryStage) throws Exception{
-        new MailApp(primaryStage);
+        //new MailApp(primaryStage);
 
         Client client = new Client();
         client.connectToHost("localhost", 69);

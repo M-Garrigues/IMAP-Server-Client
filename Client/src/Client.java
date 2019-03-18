@@ -142,7 +142,7 @@ public class Client extends Observable {
         Map<String, List<String>> headers = new HashMap<String, List<String>>();
         String headerName = null;
 // process headers
-        while ((response = readResponseLine()).length() != 0) {
+        do {
             if (response.startsWith("\t")) {
                 continue; //no process of multiline headers
             }
@@ -160,7 +160,7 @@ public class Client extends Observable {
                 headers.put(headerName, headerValues);
             }
             headerValues.add(headerValue);
-        }
+        }while ((response = readResponseLine()).length() != 0);
 // process body
         StringBuilder bodyBuilder = new StringBuilder();
         while (!(response = readResponseLine()).equals(".")) {
