@@ -22,6 +22,8 @@ public class Client extends Observable {
     private String host;
     private int hostPort;
 
+    private boolean isAuthentificated = false;
+
     public Client(){}
 
     public Client(String ip, int port)
@@ -58,17 +60,24 @@ public class Client extends Observable {
         return portLibre;
     }
 
-    public void connectToHost(String host, int port) throws IOException{
+    public boolean connectToHost(String host, int port){
 
-        socket = new Socket();
+        try{
+            socket = new Socket();
 
-        socket.connect(new InetSocketAddress(host, port));
+            socket.connect(new InetSocketAddress(host, port));
 
-        reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
-        writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+            writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
 
-        readResponseLine();
+            readResponseLine();
+            return isConnected();
+
+        }catch (IOException e){
+            return false;
+        }
+
     }
 
     public boolean isConnected(){
@@ -108,13 +117,28 @@ public class Client extends Observable {
         return readResponseLine();
     }
 
-    public void sendAPOP(String username, String pwd) throws IOException{
+    public boolean sendAPOP(String username, String pwd) throws IOException{
 
-        sendCommand("APOP "+username+" "+pwd);
+       String response =  sendCommand("APOP "+username+" "+pwd);
+
+        if (response.startsWith("-OK")){
+            if(debug){
+                System.out.println("Authentification OK.");
+            }
+            isAuthentificated = true;
+            return true;
+        }else{
+            if(debug){
+                System.out.println("Authentification FAILED.");
+            }
+            isAuthentificated = false;
+            return false;
+        }
     }
 
     public void logout() throws IOException{
         sendCommand("QUIT");
+        isAuthentificated = false;
     }
 
     public int getNumberOfNewMessages() throws IOException {

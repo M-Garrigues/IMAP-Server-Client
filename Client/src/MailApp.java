@@ -13,8 +13,16 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import javax.swing.*;
+import java.io.IOException;
+import java.util.List;
 
 public class MailApp {
+
+    Client client = new Client();
+    List<Message> messages;
+    int nbNewMessages = 0;
+
+
     public MailApp(Stage stage) {
         stage.setTitle("TFTP_SendFile");
         stage.setWidth(600);
@@ -82,6 +90,50 @@ public class MailApp {
 
         ErrorView errorView = new ErrorView(stage);
         client.addObserver(errorView);
+    }
+
+    public void connect() throws IOException{
+
+        assert !client.isConnected() : "Client is already connnected";
+
+        //checkChampsRemplis, erreur sinon
+
+        String host = "A RELIER AU CHAMP HOST";
+        int ip = Integer.parseInt("A RELIER AU CHAMP IP");
+        String username = "A RELIER AU CHAMP HOST";
+        String password = "A RELIER";
+
+        if (client.connectToHost(host, ip)){
+
+            if( client.sendAPOP(username, password)){
+
+                //PASSER AU STAGE 2;
+            }else{
+                //errorMessage("Authentification failed.");
+            }
+        }else{
+            client.disconnect();
+            //errorMessage("Can not reach server. Verify ip and port are correctly configured.")
+        }
+    }
+
+    public void quit()throws IOException{
+
+        //Fonctions en plus
+        disconnect();
+    }
+
+    public void disconnect()throws IOException{
+
+        client.logout();
+        client.disconnect();
+    }
+
+    public void refreshMessages() throws  IOException{
+
+        nbNewMessages = client.getNumberOfNewMessages();
+
+        messages = client.getMessages();
     }
 }
 
