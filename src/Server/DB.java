@@ -65,6 +65,18 @@ public class DB {
         return res;
     }
 
+    public static int[] LIST(String user){
+        int[] res = {0,0};
+        ArrayList<String> liste = getMessageList(("DB/"+user));
+
+        for (String fileName : liste){
+
+        }
+        return res;
+    }
+
+
+
 
 
 

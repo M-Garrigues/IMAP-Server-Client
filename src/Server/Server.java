@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Server{
-    private static final int PORT = 110;
+    private static final int PORT = 1025;
 
     public static void main(String[] args) throws IOException {
         List<ServerThread> serverThreads = new ArrayList<>();
