@@ -102,8 +102,7 @@ public class Client extends Observable {
         if (debug) {
             System.out.println("DEBUG [in] : " + response);
         }
-        if (response.startsWith("-ERR"))
-            throw new RuntimeException("Server has returned an error: " + response.replaceFirst("-ERR ", ""));
+
         return response;
     }
 
@@ -121,7 +120,7 @@ public class Client extends Observable {
 
        String response =  sendCommand("APOP "+username+" "+pwd);
 
-        if (response.startsWith("-OK")){
+        if (response.startsWith("+OK")){
             if(debug){
                 System.out.println("Authentification OK.");
             }

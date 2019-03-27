@@ -2,18 +2,25 @@ package src;
 
 import View.ErrorView;
 import View.FileQueueView;
+import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
+import javafx.scene.paint.Color;
 
 import javax.swing.*;
+import java.awt.*;
 import java.io.IOException;
 import java.util.List;
 
@@ -23,7 +30,12 @@ public class MailApp {
     Client client = new Client();
     List<Message> messages;
     int nbNewMessages = 0;
-    
+    Label error_label;
+    TextField input_user;
+    TextField input_ip;
+    TextField input_port;
+    PasswordField input_password;
+    String errorMessage;
     public MailApp(Stage stage) {
 
 
@@ -31,15 +43,15 @@ public class MailApp {
 
         stage.setTitle("POP3 Client");
         stage.setWidth(600);
-        stage.setHeight(400);
+        stage.setHeight(180);
 
 
 
 
         Group root = new Group();
         String username = "username";
-        String ip = "localhost";
-        int port = 69;
+        String ip = "192.168.43.199";
+        int port = 1025;
 
         BorderPane container = new BorderPane();
         VBox vBox = new VBox();
@@ -48,33 +60,106 @@ public class MailApp {
         HBox hBox1 = new HBox();
         Label label_user = new Label(" Username : ");
         hBox1.getChildren().add(label_user);
-        TextField input_user = new TextField(username);
+        input_user = new TextField(username);
         hBox1.getChildren().add(input_user);
 
         HBox hBox2 = new HBox();
         Label label_password = new Label(" Password :  ");
         hBox2.getChildren().add(label_password);
-        PasswordField input_password = new PasswordField();
+        input_password = new PasswordField();
         hBox2.getChildren().add(input_password);
 
         HBox hBox3 = new HBox();
         Label label_ip = new Label(" Server IP :   ");
         hBox3.getChildren().add(label_ip);
-        TextField input_ip = new TextField(ip);
+        input_ip = new TextField(ip);
         hBox3.getChildren().add(input_ip);
         Label label_port = new Label("  Server Port : ");
         hBox3.getChildren().add(label_port);
-        TextField input_port = new TextField(Integer.toString(port));
+        input_port = new TextField(Integer.toString(port));
         hBox3.getChildren().add(input_port);
 
         HBox hBox4 = new HBox();
+        error_label = new Label("");
+        error_label.setTextFill(Color.RED);
         Button button_connexion = new Button("Connexion");
         button_connexion.setOnAction(e -> {
 
+            error_label.setText("  ");
+            try
+            {
+                connect();
+            }
+            catch (IOException ex)
+            {
+                error_label.setText(" " +errorMessage);
+            }
+            if(client.isConnected())
+            {
+                try
+                {
+                    refreshMessages();
+                }
+                catch (IOException ex)
+                {
+                    error_label.setText(" " + errorMessage);
+                }
+
+                if(nbNewMessages != 0)
+                {
+                    ScrollPane list_mail =new ScrollPane();
+                    list_mail.setFitToHeight(true);
+                    list_mail.setFitToWidth(false);
+                    Label contentMail = new Label();
+                    contentMail.setWrapText(true);
+                    contentMail.setMaxWidth(570);
+                    list_mail.setPrefSize(210,350);
+                    VBox vBoxMail = new VBox();
+
+                    for(int i = 0; i< nbNewMessages;i++)
+                    {
+                        final int j = i;
+                        StackPane s = new StackPane();
+                        Rectangle r = new Rectangle(190,70);
+                        r.setFill(Color.LIGHTGRAY);
+                        r.setStroke(Color.BLACK);
+                        r.setOnMouseClicked(new EventHandler<MouseEvent>()
+                        {
+                            @Override
+                            public void handle(MouseEvent t) {
+
+                                r.setFill(Color.WHITE);
+                                contentMail.setText(messages.get(j).getBody());
+                            }
+                        });
+                        Label l = new Label("TEST "+i/*messages.get(i).getHeaders().keySet().toString()*/);
+                        s.getChildren().addAll(r,l);
+                        vBoxMail.getChildren().add(s);
+                    }
+
+                    list_mail.setContent(vBoxMail);
+                    BorderPane secondaryLayout = new BorderPane();
+                    secondaryLayout.setLeft(list_mail);
+                    secondaryLayout.setRight(contentMail);
+                    Scene secondScene = new Scene(secondaryLayout, 800, 350);
+
+                    // New window (Stage)
+                    Stage newWindow = new Stage();
+                    newWindow.setTitle("Display Email");
+                    newWindow.setScene(secondScene);
+
+                    newWindow.show();
+
+               }
+            }
+
+
+
+
         });
-        Label label_spacing =new Label("                    ");
-        hBox4.getChildren().add(label_spacing);
+
         hBox4.getChildren().add(button_connexion);
+        hBox4.getChildren().add(error_label);
         vBox.getChildren().add(hBox1);
         vBox.getChildren().add(hBox2);
         vBox.getChildren().add(hBox3);
@@ -83,7 +168,6 @@ public class MailApp {
 
 
         container.setTop(vBox);
-
 
 
 
@@ -111,22 +195,25 @@ public class MailApp {
 
         //checkChampsRemplis, erreur sinon
 
-        String host = "A RELIER AU CHAMP HOST";
-        int ip = Integer.parseInt("A RELIER AU CHAMP IP");
-        String username = "A RELIER AU CHAMP HOST";
-        String password = "A RELIER";
+        String host = input_ip.getText();
+        int port = Integer.parseInt(input_port.getText());
+        String username = input_user.getText();
+        String password = input_password.getText();
 
-        if (client.connectToHost(host, ip)){
+        if (client.connectToHost(host, port)){
 
             if( client.sendAPOP(username, password)){
 
                 //PASSER AU STAGE 2;
             }else{
-                //errorMessage("Authentification failed.");
+                errorMessage = "Authentification failed.";
+                throw new IOException();
             }
         }else{
             client.disconnect();
-            //errorMessage("Can not reach server. Verify ip and port are correctly configured.")
+
+            errorMessage = "Can not reach server. Verify ip and port are correctly configured.";
+            throw new IOException();
         }
     }
 
@@ -144,9 +231,14 @@ public class MailApp {
 
     public void refreshMessages() throws  IOException{
 
-        nbNewMessages = client.getNumberOfNewMessages();
-
-        messages = client.getMessages();
+        try {
+            nbNewMessages = client.getNumberOfNewMessages();
+            messages = client.getMessages();
+        }
+        catch(IOException ex)
+        {
+            errorMessage = "Cannot load messages";
+        }
     }
 }
 
