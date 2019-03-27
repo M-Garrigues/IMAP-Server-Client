@@ -71,6 +71,7 @@ public class ServerThread extends Thread{
         serverState = StateEnum.AUTHORIZATION;
         this.setCurrentWelcomeMessage();
         out.println("+OK POP3 server ready " + currentWelcomeMessage);
+        System.out.println("+OK POP3 server ready " + currentWelcomeMessage);
     }
 
     private void handleAuthorizationState(){
@@ -89,14 +90,13 @@ public class ServerThread extends Thread{
                     }
                 }
                 else if(params[0].equals("APOP")){
+                    System.out.println("Tentative de APOP");
                     String[] apopParams = params[1].split(" ", 2);
                     if(!apopParams[0].equals("user1") && !apopParams[0].equals("user2")){
                         out.println("-ERR unknown user : " + params[1]);
                     }
                     else{
-                        String rightHash = String.format("%02x", MessageDigest.getInstance("MD5")
-                                .digest((currentWelcomeMessage + "1234").getBytes()));
-                        if(!apopParams[1].equals(rightHash)){
+                        if(!apopParams[1].equals("1234")){
                             passwordErrors++;
 
                             if(passwordErrors >= 3){
@@ -118,8 +118,6 @@ public class ServerThread extends Thread{
                     }
                 }
             } catch (IOException e) {
-                e.printStackTrace();
-            } catch (NoSuchAlgorithmException e) {
                 e.printStackTrace();
             }
     }
