@@ -70,8 +70,7 @@ public class ServerThread extends Thread{
         //Passage dans l'état Authorization
         serverState = StateEnum.AUTHORIZATION;
         this.setCurrentWelcomeMessage();
-        out.println("+OK POP3 server ready " + currentWelcomeMessage);
-        System.out.println("+OK POP3 server ready " + currentWelcomeMessage);
+        print("+OK POP3 server ready " + currentWelcomeMessage);
     }
 
     private void handleAuthorizationState(){
@@ -80,32 +79,32 @@ public class ServerThread extends Thread{
                 String[] params = input.split(" ", 2);
                 if(params[0].equals("USER")){
                     if(!params[1].equals("user1") && !params[1].equals("user2")){
-                        out.println("-ERR unknown user : " + params[1]);
+                        print("-ERR unknown user : " + params[1]);
                     }
                     else{
                         currentUser = params[1];
                         serverState = StateEnum.WAITING_PASSWORD;
 
-                        out.println("+OK");
+                        print("+OK");
                     }
                 }
                 else if(params[0].equals("APOP")){
                     System.out.println("Tentative de APOP");
                     String[] apopParams = params[1].split(" ", 2);
                     if(!apopParams[0].equals("user1") && !apopParams[0].equals("user2")){
-                        out.println("-ERR unknown user : " + params[1]);
+                        print("-ERR unknown user : " + params[1]);
                     }
                     else{
                         if(!apopParams[1].equals("1234")){
                             passwordErrors++;
 
                             if(passwordErrors >= 3){
-                                out.println("-ERR Invalid password. Too many errors, closing connection...");
+                                print("-ERR Invalid password. Too many errors, closing connection...");
                                 serverThreadSocket.close();
                                 serverState = StateEnum.READY;
                             }
                             else{
-                                out.println("-ERR Invalid password.");
+                                print("-ERR Invalid password.");
                                 serverState = StateEnum.AUTHORIZATION;
                             }
                         }
@@ -113,7 +112,7 @@ public class ServerThread extends Thread{
                             passwordErrors = 0;
                             currentUser = apopParams[0];
                             serverState = StateEnum.TRANSACTION;
-                            out.println("+OK");
+                            print("+OK");
                         }
                     }
                 }
@@ -131,12 +130,12 @@ public class ServerThread extends Thread{
                     passwordErrors++;
 
                     if(passwordErrors >= 3){
-                        out.println("-ERR Invalid password. Too many errors, closing connection...");
+                        print("-ERR Invalid password. Too many errors, closing connection...");
                         serverThreadSocket.close();
                         serverState = StateEnum.READY;
                     }
                     else{
-                        out.println("-ERR Invalid password.");
+                        print("-ERR Invalid password.");
                         serverState = StateEnum.AUTHORIZATION;
                     }
                 }
@@ -144,7 +143,7 @@ public class ServerThread extends Thread{
                     passwordErrors = 0;
                     currentUser = params[1];
                     serverState = StateEnum.TRANSACTION;
-                    out.println("+OK");
+                    print("+OK");
                 }
             }
         } catch (IOException e) {
@@ -164,5 +163,10 @@ public class ServerThread extends Thread{
 
     public StateEnum getServerState(){
         return serverState;
+    }
+
+    private void print(String message){
+        out.println(message);
+        System.out.println(message);
     }
 }
