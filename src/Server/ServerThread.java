@@ -154,7 +154,32 @@ public class ServerThread extends Thread{
     }
 
     private void handleTransactionState(){
-        //TODO
+        try {
+            String input = in.readLine();
+            String[] params = input.split(" ", 2);
+            if(params[0].equals("STAT")){
+                int[] stat = DB.STAT(currentUser);
+                print("+OK " + stat[0] + " " + stat[1]);
+            }
+            else if(params[0].equals("RETR")){
+                String filePath = "DB/" + currentUser + "/" + currentUser + "_" + params[1] + ".txt";
+                String message = DB.getMessage(filePath);
+                if(message.equals("")){
+                    print("-ERR " + params[1] + " not exists");
+                }
+                else{
+                    print("+OK " + message.length());
+                    print(message);
+                }
+            }
+            else if(params[0].equals("QUIT")){
+                serverState = StateEnum.READY;
+                currentUser = null;
+                print("+OK dewey POP3 server signing off");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void setCurrentWelcomeMessage(){

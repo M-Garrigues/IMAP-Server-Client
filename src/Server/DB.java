@@ -7,7 +7,7 @@ public class DB {
 
     private static final String PATH = "DB/";
 
-    private static String getMessage(String fileName){
+    public static String getMessage(String fileName){
 
         String message = "";
         String line = "";
