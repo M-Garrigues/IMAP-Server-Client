@@ -65,11 +65,15 @@ public class DB {
         return res;
     }
 
-    public static int[] LIST(String user){
-        int[] res = {0,0};
+    public static String LIST(String user){
+        String res = "";
         ArrayList<String> liste = getMessageList(("DB/"+user));
+        //String[][] buff = new
+
 
         for (String fileName : liste){
+            String[] parts = fileName.split("_");
+
 
         }
         return res;
