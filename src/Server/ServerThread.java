@@ -10,6 +10,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Formatter;
 import java.util.List;
 
 public class ServerThread extends Thread{
@@ -97,6 +98,7 @@ public class ServerThread extends Thread{
                     else{
                         if(!apopParams[1].equals("1234")){
                             passwordErrors++;
+                            System.out.println(encryptPassword(apopParams[1]));
 
                             if(passwordErrors >= 3){
                                 print("-ERR Invalid password. Too many errors, closing connection...");
@@ -168,5 +170,34 @@ public class ServerThread extends Thread{
     private void print(String message){
         out.println(message);
         System.out.println(message);
+    }
+
+    private static String encryptPassword(String password)
+    {
+        String sha1 = "";
+        try
+        {
+            MessageDigest crypt = MessageDigest.getInstance("SHA-1");
+            crypt.reset();
+            crypt.update(password.getBytes("UTF-8"));
+            sha1 = byteToHex(crypt.digest());
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+        }
+        return sha1;
+    }
+
+    private static String byteToHex(final byte[] hash)
+    {
+        Formatter formatter = new Formatter();
+        for (byte b : hash)
+        {
+            formatter.format("%02x", b);
+        }
+        String result = formatter.toString();
+        formatter.close();
+        return result;
     }
 }
