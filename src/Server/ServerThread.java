@@ -6,6 +6,9 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,6 +22,7 @@ public class ServerThread extends Thread{
     private PrintWriter out;
     private BufferedReader in;
 
+    private String currentWelcomeMessage;
     private String currentUser;
     private int passwordErrors = 0;
 
@@ -42,6 +46,9 @@ public class ServerThread extends Thread{
                 case WAITING_PASSWORD:
                     handleWaitingPasswordState();
                     break;
+                case TRANSACTION:
+                    handleTransactionState();
+                    break;
             }
         }
 
@@ -62,7 +69,8 @@ public class ServerThread extends Thread{
 
         //Passage dans l'état Authorization
         serverState = StateEnum.AUTHORIZATION;
-        out.println("+OK POP3 server ready");
+        this.setCurrentWelcomeMessage();
+        out.println("+OK POP3 server ready " + currentWelcomeMessage);
     }
 
     private void handleAuthorizationState(){
@@ -70,7 +78,7 @@ public class ServerThread extends Thread{
                 String input = in.readLine();
                 String[] params = input.split(" ", 2);
                 if(params[0].equals("USER")){
-                    if(!params[1].equals("utilisateur1") && !params[1].equals("utilisateur2")){
+                    if(!params[1].equals("user1") && !params[1].equals("user2")){
                         out.println("-ERR unknown user : " + params[1]);
                     }
                     else{
@@ -81,9 +89,37 @@ public class ServerThread extends Thread{
                     }
                 }
                 else if(params[0].equals("APOP")){
-                    //TODO: commande APOP
+                    String[] apopParams = params[1].split(" ", 2);
+                    if(!apopParams[0].equals("user1") && !apopParams[0].equals("user2")){
+                        out.println("-ERR unknown user : " + params[1]);
+                    }
+                    else{
+                        String rightHash = String.format("%02x", MessageDigest.getInstance("MD5")
+                                .digest((currentWelcomeMessage + "1234").getBytes()));
+                        if(!apopParams[1].equals(rightHash)){
+                            passwordErrors++;
+
+                            if(passwordErrors >= 3){
+                                out.println("-ERR Invalid password. Too many errors, closing connection...");
+                                serverThreadSocket.close();
+                                serverState = StateEnum.READY;
+                            }
+                            else{
+                                out.println("-ERR Invalid password.");
+                                serverState = StateEnum.AUTHORIZATION;
+                            }
+                        }
+                        else{
+                            passwordErrors = 0;
+                            currentUser = apopParams[0];
+                            serverState = StateEnum.TRANSACTION;
+                            out.println("+OK");
+                        }
+                    }
                 }
             } catch (IOException e) {
+                e.printStackTrace();
+            } catch (NoSuchAlgorithmException e) {
                 e.printStackTrace();
             }
     }
@@ -116,6 +152,16 @@ public class ServerThread extends Thread{
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private void handleTransactionState(){
+        //TODO
+    }
+
+    private void setCurrentWelcomeMessage(){
+        long threadId = this.getId();
+        long timestamp = new Timestamp(System.currentTimeMillis()).getTime();
+        currentWelcomeMessage = "<" + threadId + "." + timestamp + "@bestpop3serverever.com>";
     }
 
     public StateEnum getServerState(){
