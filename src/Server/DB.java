@@ -18,8 +18,9 @@ public class DB {
             BufferedReader bufferedReader =
                     new BufferedReader(fileReader);
 
+            message = bufferedReader.readLine();
             while((line = bufferedReader.readLine()) != null) {
-                message += line;
+                message += "\n" + line;
             }
 
             bufferedReader.close();

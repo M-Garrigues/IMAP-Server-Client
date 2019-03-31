@@ -17,8 +17,7 @@ public class ServerThread extends Thread{
     //private static final List<String> users = new ArrayList<String>.
 
     private StateEnum serverState;
-    private ServerSocket serverSocket;
-    private Socket serverThreadSocket;
+    private Socket socket;
     private InputStreamReader inputStreamReader;
     private PrintWriter out;
     private BufferedReader in;
@@ -27,9 +26,9 @@ public class ServerThread extends Thread{
     private String currentUser;
     private int passwordErrors = 0;
 
-    public ServerThread(ServerSocket serverSocket) throws IOException {
+    public ServerThread(Socket socket) throws IOException {
         this.serverState = StateEnum.STOPPED;
-        this.serverSocket = serverSocket;
+        this.socket = socket;
     }
 
     @Override
@@ -56,13 +55,10 @@ public class ServerThread extends Thread{
     }
 
     private void handleReadyState(){
-        //Attente d'une connexion
         try {
-            serverThreadSocket = serverSocket.accept();
-
             //Initialisation des canaux d'entrée et de sortie
-            inputStreamReader = new InputStreamReader(serverThreadSocket.getInputStream());
-            out = new PrintWriter(serverThreadSocket.getOutputStream(), true);
+            inputStreamReader = new InputStreamReader(socket.getInputStream());
+            out = new PrintWriter(socket.getOutputStream(), true);
             in = new BufferedReader(inputStreamReader);
         } catch (IOException e) {
             //e.printStackTrace();
@@ -75,52 +71,52 @@ public class ServerThread extends Thread{
     }
 
     private void handleAuthorizationState(){
-            try {
-                String input = in.readLine();
-                String[] params = input.split(" ", 2);
-                if(params[0].equals("USER")){
-                    if(!params[1].equals("user1") && !params[1].equals("user2")){
-                        print("-ERR unknown user : " + params[1]);
+        try {
+            String input = in.readLine();
+            String[] params = input.split(" ", 2);
+            if(params[0].equals("USER")){
+                if(!params[1].equals("user1") && !params[1].equals("user2") && !params[1].equals("user3")){
+                    print("-ERR unknown user : " + params[1]);
+                }
+                else{
+                    currentUser = params[1];
+                    serverState = StateEnum.WAITING_PASSWORD;
+
+                    print("+OK");
+                }
+            }
+            else if(params[0].equals("APOP")){
+                System.out.println("Tentative de APOP");
+                String[] apopParams = params[1].split(" ", 2);
+                if(!apopParams[0].equals("user1") && !apopParams[0].equals("user2") && !apopParams[0].equals("user3")){
+                    print("-ERR unknown user : " + apopParams[0]);
+                }
+                else{
+                    if(!apopParams[1].equals("1234")){
+                        passwordErrors++;
+                        System.out.println(encryptPassword(apopParams[1]));
+
+                        if(passwordErrors >= 3){
+                            print("-ERR Invalid password. Too many errors, closing connection...");
+                            socket.close();
+                            serverState = StateEnum.READY;
+                        }
+                        else{
+                            print("-ERR Invalid password.");
+                            serverState = StateEnum.AUTHORIZATION;
+                        }
                     }
                     else{
-                        currentUser = params[1];
-                        serverState = StateEnum.WAITING_PASSWORD;
-
+                        passwordErrors = 0;
+                        currentUser = apopParams[0];
+                        serverState = StateEnum.TRANSACTION;
                         print("+OK");
                     }
                 }
-                else if(params[0].equals("APOP")){
-                    System.out.println("Tentative de APOP");
-                    String[] apopParams = params[1].split(" ", 2);
-                    if(!apopParams[0].equals("user1") && !apopParams[0].equals("user2")){
-                        print("-ERR unknown user : " + params[1]);
-                    }
-                    else{
-                        if(!apopParams[1].equals("1234")){
-                            passwordErrors++;
-                            System.out.println(encryptPassword(apopParams[1]));
-
-                            if(passwordErrors >= 3){
-                                print("-ERR Invalid password. Too many errors, closing connection...");
-                                serverThreadSocket.close();
-                                serverState = StateEnum.READY;
-                            }
-                            else{
-                                print("-ERR Invalid password.");
-                                serverState = StateEnum.AUTHORIZATION;
-                            }
-                        }
-                        else{
-                            passwordErrors = 0;
-                            currentUser = apopParams[0];
-                            serverState = StateEnum.TRANSACTION;
-                            print("+OK");
-                        }
-                    }
-                }
-            } catch (IOException e) {
-                //e.printStackTrace();
             }
+        } catch (IOException e) {
+            //e.printStackTrace();
+        }
     }
 
     private void handleWaitingPasswordState(){
@@ -133,7 +129,7 @@ public class ServerThread extends Thread{
 
                     if(passwordErrors >= 3){
                         print("-ERR Invalid password. Too many errors, closing connection...");
-                        serverThreadSocket.close();
+                        socket.close();
                         serverState = StateEnum.READY;
                     }
                     else{
@@ -168,8 +164,7 @@ public class ServerThread extends Thread{
                     print("-ERR " + params[1] + " not exists");
                 }
                 else{
-                    print("+OK " + message.length());
-                    print(message);
+                    print(/*"+OK " + message.length() + "\n" + */message);
                 }
             }
             else if(params[0].equals("QUIT")){

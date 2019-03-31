@@ -83,6 +83,7 @@ public class Client extends Observable {
     public boolean isConnected(){
          return socket != null && socket.isConnected();
     }
+    public boolean isAuthentificated() { return isAuthentificated;}
 
     public void disconnect(){
 
@@ -162,6 +163,7 @@ public class Client extends Observable {
 
     protected Message getMessage(int i) throws IOException {
         String response = sendCommand("RETR " + i);
+        System.out.println(response);
         Map<String, List<String>> headers = new HashMap<String, List<String>>();
         String headerName = null;
 // process headers

@@ -94,7 +94,7 @@ public class MailApp {
             {
                 error_label.setText(" " +errorMessage);
             }
-            if(client.isConnected())
+            if(client.isAuthentificated())
             {
                 try
                 {

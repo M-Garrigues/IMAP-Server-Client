@@ -3,9 +3,7 @@ To: user3@ourserver.com
 Subject: Réu
 From: Thomas M <thomas@blabla.com>
 
-Bonjour user3,
-
-Réu en salle de réu à 10h ?
+Ok du coup salle de réu à 10h30 elle est prise avant.
 
 
 .
