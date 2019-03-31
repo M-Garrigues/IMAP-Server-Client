@@ -65,7 +65,7 @@ public class ServerThread extends Thread{
             out = new PrintWriter(serverThreadSocket.getOutputStream(), true);
             in = new BufferedReader(inputStreamReader);
         } catch (IOException e) {
-            e.printStackTrace();
+            //e.printStackTrace();
         }
 
         //Passage dans l'état Authorization
@@ -119,7 +119,7 @@ public class ServerThread extends Thread{
                     }
                 }
             } catch (IOException e) {
-                e.printStackTrace();
+                //e.printStackTrace();
             }
     }
 
@@ -149,7 +149,7 @@ public class ServerThread extends Thread{
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            //e.printStackTrace();
         }
     }
 
@@ -178,7 +178,7 @@ public class ServerThread extends Thread{
                 print("+OK dewey POP3 server signing off");
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            //e.printStackTrace();
         }
     }
 
