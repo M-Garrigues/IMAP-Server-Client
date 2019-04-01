@@ -13,6 +13,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 import java.io.IOException;
 import java.util.List;
@@ -107,14 +108,14 @@ public class MailApp {
                     contentMail.setWrapText(true);
                     contentMail.setMaxWidth(540);
                     contentMail.setMinWidth(540);
-                    list_mail.setPrefSize(230,350);
+                    list_mail.setPrefSize(300,350);
                     VBox vBoxMail = new VBox();
 
                     for(int i = 0; i< nbNewMessages;i++)
                     {
                         final int j = i;
                         StackPane s = new StackPane();
-                        Rectangle r = new Rectangle(230,70);
+                        Rectangle r = new Rectangle(300,70);
                         r.setFill(Color.LIGHTGRAY);
                         r.setStroke(Color.BLACK);
                         s.setOnMouseClicked(new EventHandler<MouseEvent>()
@@ -135,7 +136,7 @@ public class MailApp {
                     BorderPane secondaryLayout = new BorderPane();
                     secondaryLayout.setLeft(list_mail);
                     secondaryLayout.setRight(contentMail);
-                    Scene secondScene = new Scene(secondaryLayout, 800, 350);
+                    Scene secondScene = new Scene(secondaryLayout, 900, 350);
 
                     // New window (Stage)
                     Stage newWindow = new Stage();
@@ -143,8 +144,20 @@ public class MailApp {
                     newWindow.setScene(secondScene);
 
                     newWindow.show();
+                    newWindow.setOnCloseRequest(new EventHandler<WindowEvent>() {
+                        public void handle(WindowEvent we) {
+                            try {
+                                quit();
+                            }
+                            catch(IOException e)
+                            {
 
-               }
+                            }
+
+                        }
+                    });
+
+                }
             }
 
 
