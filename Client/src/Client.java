@@ -174,10 +174,10 @@ public class Client extends Observable {
             int colonPosition = response.indexOf(":");
             headerName = response.substring(0, colonPosition);
             String headerValue;
-            if (headerName.length() > colonPosition) {
+            if (headerName.length() >= colonPosition) {
                 headerValue = response.substring(colonPosition + 2);
             } else {
-                headerValue = "";
+                headerValue = "papa";
             }
             List<String> headerValues = headers.get(headerName);
             if (headerValues == null) {

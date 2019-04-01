@@ -1,10 +1,6 @@
 import javafx.application.Application;
 import javafx.stage.Stage;
-import src.Client;
 import src.MailApp;
-import src.Message;
-
-import java.util.List;
 
 /**
  * Created by mathieu garrigues on 17/05/2017.

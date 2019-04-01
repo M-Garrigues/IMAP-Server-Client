@@ -1,26 +1,19 @@
 package src;
 
 import View.ErrorView;
-import View.FileQueueView;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
-import javafx.scene.paint.Color;
 
-import javax.swing.*;
-import java.awt.*;
 import java.io.IOException;
 import java.util.List;
 
@@ -51,7 +44,7 @@ public class MailApp {
         Group root = new Group();
         String username = "username";
         String ip = "192.168.43.199";
-        int port = 1025;
+        int port = 5442;
 
         BorderPane container = new BorderPane();
         VBox vBox = new VBox();
@@ -112,18 +105,19 @@ public class MailApp {
                     list_mail.setFitToWidth(false);
                     Label contentMail = new Label();
                     contentMail.setWrapText(true);
-                    contentMail.setMaxWidth(570);
-                    list_mail.setPrefSize(210,350);
+                    contentMail.setMaxWidth(540);
+                    contentMail.setMinWidth(540);
+                    list_mail.setPrefSize(230,350);
                     VBox vBoxMail = new VBox();
 
                     for(int i = 0; i< nbNewMessages;i++)
                     {
                         final int j = i;
                         StackPane s = new StackPane();
-                        Rectangle r = new Rectangle(190,70);
+                        Rectangle r = new Rectangle(230,70);
                         r.setFill(Color.LIGHTGRAY);
                         r.setStroke(Color.BLACK);
-                        r.setOnMouseClicked(new EventHandler<MouseEvent>()
+                        s.setOnMouseClicked(new EventHandler<MouseEvent>()
                         {
                             @Override
                             public void handle(MouseEvent t) {
@@ -132,7 +126,7 @@ public class MailApp {
                                 contentMail.setText(messages.get(j).getBody());
                             }
                         });
-                        Label l = new Label("TEST "+i/*messages.get(i).getHeaders().keySet().toString()*/);
+                        Label l = new Label("From : " + messages.get(i).getHeaders().get("From").toString() +"\n Subject : "+ messages.get(i).getHeaders().get("Subject").toString());
                         s.getChildren().addAll(r,l);
                         vBoxMail.getChildren().add(s);
                     }
