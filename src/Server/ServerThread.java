@@ -4,14 +4,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.net.ServerSocket;
 import java.net.Socket;
 import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.Formatter;
-import java.util.List;
 
 public class ServerThread extends Thread{
     //private static final List<String> users = new ArrayList<String>.
@@ -73,49 +69,60 @@ public class ServerThread extends Thread{
     private void handleAuthorizationState(){
         try {
             String input = in.readLine();
-            String[] params = input.split(" ", 2);
-            if(params[0].equals("USER")){
-                if(!params[1].equals("user1") && !params[1].equals("user2") && !params[1].equals("user3")){
-                    print("-ERR unknown user : " + params[1]);
-                }
-                else{
-                    currentUser = params[1];
-                    serverState = StateEnum.WAITING_PASSWORD;
-
-                    print("+OK");
-                }
-            }
-            else if(params[0].equals("APOP")){
-                System.out.println("Tentative de APOP");
-                String[] apopParams = params[1].split(" ", 2);
-                if(!apopParams[0].equals("user1") && !apopParams[0].equals("user2") && !apopParams[0].equals("user3")){
-                    print("-ERR unknown user : " + apopParams[0]);
-                }
-                else{
-                    if(!apopParams[1].equals("1234")){
-                        passwordErrors++;
-                        System.out.println(encryptPassword(apopParams[1]));
-
-                        if(passwordErrors >= 3){
-                            print("-ERR Invalid password. Too many errors, closing connection...");
-                            socket.close();
-                            serverState = StateEnum.READY;
-                        }
-                        else{
-                            print("-ERR Invalid password.");
-                            serverState = StateEnum.AUTHORIZATION;
-                        }
+            if(!(input == null)){
+                String[] params = input.split(" ", 2);
+                if(params[0].equals("USER")){
+                    if(!params[1].equals("user1") && !params[1].equals("user2") && !params[1].equals("user3")){
+                        print("-ERR unknown user : " + params[1]);
                     }
                     else{
-                        passwordErrors = 0;
-                        currentUser = apopParams[0];
-                        serverState = StateEnum.TRANSACTION;
+                        currentUser = params[1];
+                        serverState = StateEnum.WAITING_PASSWORD;
+
                         print("+OK");
                     }
                 }
+                else if(params[0].equals("APOP")){
+                    System.out.println("Tentative de APOP");
+                    String[] apopParams = params[1].split(" ", 2);
+                    if(!apopParams[0].equals("user1") && !apopParams[0].equals("user2") && !apopParams[0].equals("user3")){
+                        print("-ERR unknown user : " + apopParams[0]);
+                    }
+                    else{
+                        String rightPwd = encryptPassword(currentWelcomeMessage+"1234");
+                        if(!apopParams[1].equals(rightPwd)){
+                            passwordErrors++;
+                            System.out.println(rightPwd);
+
+                            if(passwordErrors >= 3){
+                                print("-ERR Invalid password. Too many errors, closing connection...");
+                                socket.close();
+                                serverState = StateEnum.READY;
+                            }
+                            else{
+                                print("-ERR Invalid password.");
+                                serverState = StateEnum.AUTHORIZATION;
+                            }
+                        }
+                        else{
+                            passwordErrors = 0;
+                            currentUser = apopParams[0];
+                            serverState = StateEnum.TRANSACTION;
+                            print("+OK");
+                        }
+                    }
+                }
+            }else{
+                System.out.println("Client déconnecté.");
+                try{
+                    this.sleep(15000000);
+                }catch (Exception e){
+
+                }
             }
+
         } catch (IOException e) {
-            //e.printStackTrace();
+
         }
     }
 
