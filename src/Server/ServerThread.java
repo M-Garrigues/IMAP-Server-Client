@@ -17,7 +17,12 @@ public class ServerThread extends Thread{
     //private static final List<String> users = new ArrayList<String>.
 
     private StateEnum serverState;
+<<<<<<< HEAD
     private Socket socket;
+=======
+    private ServerSocket serverSocket;
+    private Socket serverThreadSocket;
+>>>>>>> 1e57b81be0a25efbd239f0269b69fe6fdcb25439
     private InputStreamReader inputStreamReader;
     private PrintWriter out;
     private BufferedReader in;
@@ -26,9 +31,15 @@ public class ServerThread extends Thread{
     private String currentUser;
     private int passwordErrors = 0;
 
+<<<<<<< HEAD
     public ServerThread(Socket socket) throws IOException {
         this.serverState = StateEnum.STOPPED;
         this.socket = socket;
+=======
+    public ServerThread(ServerSocket serverSocket) throws IOException {
+        this.serverState = StateEnum.STOPPED;
+        this.serverSocket = serverSocket;
+>>>>>>> 1e57b81be0a25efbd239f0269b69fe6fdcb25439
     }
 
     @Override
@@ -55,6 +66,7 @@ public class ServerThread extends Thread{
     }
 
     private void handleReadyState(){
+<<<<<<< HEAD
         try {
             //Initialisation des canaux d'entrée et de sortie
             inputStreamReader = new InputStreamReader(socket.getInputStream());
@@ -62,6 +74,18 @@ public class ServerThread extends Thread{
             in = new BufferedReader(inputStreamReader);
         } catch (IOException e) {
             //e.printStackTrace();
+=======
+        //Attente d'une connexion
+        try {
+            serverThreadSocket = serverSocket.accept();
+
+            //Initialisation des canaux d'entrée et de sortie
+            inputStreamReader = new InputStreamReader(serverThreadSocket.getInputStream());
+            out = new PrintWriter(serverThreadSocket.getOutputStream(), true);
+            in = new BufferedReader(inputStreamReader);
+        } catch (IOException e) {
+            e.printStackTrace();
+>>>>>>> 1e57b81be0a25efbd239f0269b69fe6fdcb25439
         }
 
         //Passage dans l'état Authorization
@@ -71,6 +95,7 @@ public class ServerThread extends Thread{
     }
 
     private void handleAuthorizationState(){
+<<<<<<< HEAD
         try {
             String input = in.readLine();
             String[] params = input.split(" ", 2);
@@ -117,6 +142,54 @@ public class ServerThread extends Thread{
         } catch (IOException e) {
             //e.printStackTrace();
         }
+=======
+            try {
+                String input = in.readLine();
+                String[] params = input.split(" ", 2);
+                if(params[0].equals("USER")){
+                    if(!params[1].equals("user1") && !params[1].equals("user2")){
+                        print("-ERR unknown user : " + params[1]);
+                    }
+                    else{
+                        currentUser = params[1];
+                        serverState = StateEnum.WAITING_PASSWORD;
+
+                        print("+OK");
+                    }
+                }
+                else if(params[0].equals("APOP")){
+                    System.out.println("Tentative de APOP");
+                    String[] apopParams = params[1].split(" ", 2);
+                    if(!apopParams[0].equals("user1") && !apopParams[0].equals("user2")){
+                        print("-ERR unknown user : " + params[1]);
+                    }
+                    else{
+                        if(!apopParams[1].equals("1234")){
+                            passwordErrors++;
+                            System.out.println(encryptPassword(apopParams[1]));
+
+                            if(passwordErrors >= 3){
+                                print("-ERR Invalid password. Too many errors, closing connection...");
+                                serverThreadSocket.close();
+                                serverState = StateEnum.READY;
+                            }
+                            else{
+                                print("-ERR Invalid password.");
+                                serverState = StateEnum.AUTHORIZATION;
+                            }
+                        }
+                        else{
+                            passwordErrors = 0;
+                            currentUser = apopParams[0];
+                            serverState = StateEnum.TRANSACTION;
+                            print("+OK");
+                        }
+                    }
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+>>>>>>> 1e57b81be0a25efbd239f0269b69fe6fdcb25439
     }
 
     private void handleWaitingPasswordState(){
@@ -129,7 +202,11 @@ public class ServerThread extends Thread{
 
                     if(passwordErrors >= 3){
                         print("-ERR Invalid password. Too many errors, closing connection...");
+<<<<<<< HEAD
                         socket.close();
+=======
+                        serverThreadSocket.close();
+>>>>>>> 1e57b81be0a25efbd239f0269b69fe6fdcb25439
                         serverState = StateEnum.READY;
                     }
                     else{
@@ -145,7 +222,11 @@ public class ServerThread extends Thread{
                 }
             }
         } catch (IOException e) {
+<<<<<<< HEAD
             //e.printStackTrace();
+=======
+            e.printStackTrace();
+>>>>>>> 1e57b81be0a25efbd239f0269b69fe6fdcb25439
         }
     }
 
@@ -164,7 +245,12 @@ public class ServerThread extends Thread{
                     print("-ERR " + params[1] + " not exists");
                 }
                 else{
+<<<<<<< HEAD
                     print(/*"+OK " + message.length() + "\n" + */message);
+=======
+                    print("+OK " + message.length());
+                    print(message);
+>>>>>>> 1e57b81be0a25efbd239f0269b69fe6fdcb25439
                 }
             }
             else if(params[0].equals("QUIT")){
@@ -173,7 +259,11 @@ public class ServerThread extends Thread{
                 print("+OK dewey POP3 server signing off");
             }
         } catch (IOException e) {
+<<<<<<< HEAD
             //e.printStackTrace();
+=======
+            e.printStackTrace();
+>>>>>>> 1e57b81be0a25efbd239f0269b69fe6fdcb25439
         }
     }
 
