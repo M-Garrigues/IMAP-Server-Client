@@ -196,7 +196,9 @@ public class MailApp {
 
         if (client.connectToHost(host, port)){
 
-            if( client.sendAPOP(username, password)){
+            String timestamp = client.getTimeStamp();
+
+            if( client.sendAPOP(username, password, timestamp)){
 
                 //PASSER AU STAGE 2;
             }else{

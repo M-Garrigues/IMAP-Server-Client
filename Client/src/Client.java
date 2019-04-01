@@ -2,6 +2,7 @@ package src;
 
 import java.io.*;
 import java.net.*;
+import java.security.MessageDigest;
 import java.util.*;
 
 public class Client extends Observable {
@@ -21,6 +22,7 @@ public class Client extends Observable {
 
     private String host;
     private int hostPort;
+    private String timeStamp;
 
     private boolean isAuthentificated = false;
 
@@ -30,6 +32,10 @@ public class Client extends Observable {
     {
         setIP(ip);
         this.port = port;
+    }
+
+    public String getTimeStamp(){
+        return timeStamp;
     }
 
     public void setPort(int port)
@@ -71,7 +77,10 @@ public class Client extends Observable {
 
             writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
 
-            readResponseLine();
+            String ret = readResponseLine();
+
+            timeStamp = ret.substring(ret.lastIndexOf(" ")+1);
+            System.out.println(timeStamp);
             return isConnected();
 
         }catch (IOException e){
@@ -117,9 +126,13 @@ public class Client extends Observable {
         return readResponseLine();
     }
 
-    public boolean sendAPOP(String username, String pwd) throws IOException{
+    public boolean sendAPOP(String username, String pwd, String timestamp) throws IOException{
 
-       String response =  sendCommand("APOP "+username+" "+pwd);
+        System.out.println(timestamp+pwd);
+        String password = encryptPassword(timestamp+pwd);
+
+        String response =  sendCommand("APOP "+username+" "+password);
+
 
         if (response.startsWith("+OK")){
             if(debug){
@@ -201,5 +214,34 @@ public class Client extends Observable {
             messageList.add(getMessage(i));
         }
         return messageList;
+    }
+
+    private static String encryptPassword(String password)
+    {
+        String sha1 = "";
+        try
+        {
+            MessageDigest crypt = MessageDigest.getInstance("SHA-1");
+            crypt.reset();
+            crypt.update(password.getBytes("UTF-8"));
+            sha1 = byteToHex(crypt.digest());
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+        }
+        return sha1;
+    }
+
+    private static String byteToHex(final byte[] hash)
+    {
+        Formatter formatter = new Formatter();
+        for (byte b : hash)
+        {
+            formatter.format("%02x", b);
+        }
+        String result = formatter.toString();
+        formatter.close();
+        return result;
     }
 }
