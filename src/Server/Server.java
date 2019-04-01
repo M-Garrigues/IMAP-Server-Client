@@ -14,19 +14,9 @@ public class Server{
         ServerSocket serverSocket = new ServerSocket(PORT);
 
         while(true){
-<<<<<<< HEAD
             ServerThread serverThread = new ServerThread(serverSocket.accept());
             serverThread.start();
             serverThreads.add(serverThread);
-=======
-            //Si le dernier thread créé n'est pas dans l'état Ready, on en crée un nouveau dans cet état
-            //(pour être en mesure d'accepter une nouvelle connexion entrante)
-            if(serverThreads.isEmpty() || serverThreads.get(serverThreads.size()-1).getServerState() != StateEnum.READY){
-                ServerThread serverThread = new ServerThread(serverSocket);
-                serverThread.run();
-                serverThreads.add(serverThread);
-            }
->>>>>>> 1e57b81be0a25efbd239f0269b69fe6fdcb25439
         }
 
     }

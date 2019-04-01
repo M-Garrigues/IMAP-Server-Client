@@ -1,6 +1,5 @@
-Date: Tue, 9 Mar 2019 09:50:17 +0200
+﻿Date: Tue, 9 Mar 2019 09:50:17 +0200
 To: user2@ourserver.com
-<<<<<<< HEAD
 Subject: blabla
 From: Jeanine <jeaninedelacompta@blabla.com>
 
@@ -12,13 +11,3 @@ Jeanine de la compta.
 
 
 .
-=======
-Subject: Manger
-From: Valentin G <val6969@blabla.com>
-
-Salut user2,
-
-Tu manges où à midi ? avec user1 on va au RU ça va être super. Viens donc te joindre à nous !
-
-
->>>>>>> 1e57b81be0a25efbd239f0269b69fe6fdcb25439
